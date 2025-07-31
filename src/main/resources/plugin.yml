@@ -2,7 +2,7 @@ name: UtilityX-Template
 version: '0725'
 main: xyz.blackdev.utilityxcore.UtilityXCore
 api-version: '1.21'
-prefix: UX
+prefix: UX-Core
 load: STARTUP
 authors: [ BlackDev, Idiotischer ]
 description: UtilityX is a Plugin that is supposed to replace Essentials
