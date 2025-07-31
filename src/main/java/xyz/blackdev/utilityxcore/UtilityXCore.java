@@ -1,6 +1,10 @@
 package xyz.blackdev.utilityxcore;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import xyz.blackdev.utilityxcore.config.ConfigManager;
+import xyz.blackdev.utilityxcore.handlers.ConfigHandler;
+import xyz.blackdev.utilityxcore.handlers.DirectoryHandler;
+import xyz.blackdev.utilityxcore.utils.DirectoryUtil;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,28 +13,22 @@ import java.util.logging.Logger;
 public final class UtilityXCore extends JavaPlugin {
 
     public static Logger logger = Logger.getLogger("UX-Core");
-    public Path uxAddonsDir = Path.of(getServer().getWorldContainer().getAbsolutePath(), "plugins/UXAddons");
+    public static ConfigManager manager;
 
     @Override
     public void onEnable() {
         logger.info("UtilityXCore has been enabled!");
-        try {
-            if (!Files.exists(uxAddonsDir)) {
-                Files.createDirectories(uxAddonsDir);
-                logger.info("Created UXAddons directory at: " + uxAddonsDir);
-            } else {
-                logger.info("UXAddons directory already exists at: " + uxAddonsDir);
-            }
-        } catch (Exception e) {
-            logger.severe("Failed to create UXAddons directory: " + e.getMessage());
-        }
-
+        manager = new ConfigManager(getServer().getWorldContainer().getAbsolutePath() + "/plugins/UX/UXConfigs");
+        DirectoryHandler.CreateDirectories();
+        ConfigHandler.CreateConfigs();
     }
 
     @Override
     public void onDisable() {
-
+    manager.saveAll();
     logger.info("UtilityXCore has been disabled!");
+
+
 
     }
 }
