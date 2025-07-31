@@ -1,4 +1,4 @@
-name: UtilityX-Template
+name: UtilityX-Core
 version: '0725'
 main: xyz.blackdev.utilityxcore.UtilityXCore
 api-version: '1.21'
