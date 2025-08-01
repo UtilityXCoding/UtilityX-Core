@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id("xyz.jpenilla.run-paper") version "2.3.1"
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = 'xyz.blackdev'
@@ -16,10 +17,15 @@ repositories {
         name = "sonatype"
         url = "https://oss.sonatype.org/content/groups/public/"
     }
+    maven {
+        name "xenondevsReleases"
+        url "https://repo.xenondevs.xyz/releases"
+    }
 }
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+    implementation "xyz.xenondevs.invui:invui:1.46"
 }
 
 tasks {
@@ -55,8 +61,13 @@ processResources {
     }
 }
 
-
 jar {
     archiveBaseName.set('UtilityX-Core')
     archiveVersion.set(version)
+}
+
+shadowJar {
+    archiveBaseName.set('UtilityX-Core')
+    archiveVersion.set(version)
+    archiveClassifier.set('all')
 }
