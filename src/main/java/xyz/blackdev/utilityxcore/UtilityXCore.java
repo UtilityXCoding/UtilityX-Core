@@ -1,46 +1,49 @@
 package xyz.blackdev.utilityxcore;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.blackdev.utilityxcore.addon.Addon;
+import xyz.blackdev.utilityxcore.addon.AddonListener;
+import xyz.blackdev.utilityxcore.commands.AddonCommand;
+import xyz.blackdev.utilityxcore.commands.CheckVersionCommand;
+import xyz.blackdev.utilityxcore.commands.UtilityXCommand;
+import xyz.blackdev.utilityxcore.commands.UtilityXCoreCommand;
+import xyz.blackdev.utilityxcore.handlers.ConfigHandler;
+import xyz.blackdev.utilityxcore.handlers.DirectoryHandler;
+import xyz.xenondevs.invui.InvUI;
 
 import java.io.IOException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Objects;
 import java.util.logging.Logger;
 
-
-// config setting
 public final class UtilityXCore extends JavaPlugin {
-    public static Logger logger = Logger.getLogger("UXCore");
-    private Path modulePath;
+    public static Logger logger = Logger.getLogger("UX-Core");
+    public static String version = "010825";
+
     private static UtilityXCore instance;
     @Override
     public void onEnable() {
-        instance = this;
-
-        String modulePathString;
-
-        if(!this.getConfig().contains("module-path")) this.getConfig().set("module-path", "modules");
-
-        modulePathString = this.getConfig().getString("module-path");
-
-        if (modulePathString != null) {
-            this.getConfig().set("module-path", "modules"); //technically not needed, but just to be sure that i dont  break shit
-
-            modulePath = this.getDataPath().resolve(modulePathString);
-        }
-
-        loadAddons();
+        UtilityXCore.instance = this;
 
         logger.info("UtilityXCore has been enabled!");
+        DirectoryHandler.createDirectories();
+        ConfigHandler.createConfigs();
+        InvUI.getInstance().setPlugin(this);
+
+        getServer().getPluginManager().registerEvents(new AddonListener(), this);
+        getCommand("utilityx").setExecutor(new UtilityXCommand());
+        getCommand("addon").setExecutor(new AddonCommand());
+        getCommand("UXVersion").setExecutor(new CheckVersionCommand());
+        getCommand("UtilityXCore").setExecutor(new UtilityXCoreCommand());
+
+        Bukkit.getScheduler().runTask(this, this::loadAddons);
     }
 
     public void loadAddons() {
         try {
-            Files.walk(modulePath, 1, FileVisitOption.FOLLOW_LINKS)
+            Files.walk(DirectoryHandler.getAddons(), 1, FileVisitOption.FOLLOW_LINKS)
                     .filter(Files::isRegularFile)
                     .forEach(file -> {
                         try {
@@ -48,19 +51,18 @@ public final class UtilityXCore extends JavaPlugin {
                             if (addon != null) {
                                 addon.load();
                             } else {
-                                System.err.println("Failed to load addon: " + file);
+                                System.err.println("Failed to load addon from: " + file);
                             }
                         } catch (Exception ex) {
-                            System.err.println("Error loading addon: " + file);
+                            System.err.println("Error loading addon from: " + file);
                             ex.printStackTrace();
                         }
                     });
         } catch (IOException e) {
-            System.err.println("Error walking module path: " + modulePath);
+            System.err.println("Error walking module path: " + DirectoryHandler.getAddons());
             e.printStackTrace();
         }
     }
-
 
     @Override
     public void onDisable() {
@@ -69,9 +71,5 @@ public final class UtilityXCore extends JavaPlugin {
 
     public static UtilityXCore getInstance() {
         return instance;
-    }
-
-    public Path getModulePath() {
-        return modulePath;
     }
 }
