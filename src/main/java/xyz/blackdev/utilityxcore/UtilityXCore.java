@@ -11,16 +11,14 @@ import xyz.blackdev.utilityxcore.commands.UtilityXCoreCommand;
 import xyz.blackdev.utilityxcore.handlers.ConfigHandler;
 import xyz.blackdev.utilityxcore.handlers.DirectoryHandler;
 import xyz.xenondevs.invui.InvUI;
-
 import java.io.IOException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.logging.Logger;
 
 public final class UtilityXCore extends JavaPlugin {
     public static Logger logger = Logger.getLogger("UX-Core");
-    public static String version = "010825";
+    public static String version = "060825";
 
     private static UtilityXCore instance;
     @Override
