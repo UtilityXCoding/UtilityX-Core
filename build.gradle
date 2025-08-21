@@ -71,7 +71,9 @@ jar {
     archiveVersion.set(version)
 }
 
+
 shadowJar {
+
     archiveBaseName.set('UtilityX-Core')
     archiveVersion.set(version)
     archiveClassifier.set('all')

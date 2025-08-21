@@ -1,5 +1,5 @@
 name: UtilityX-Core
-version: '010825'
+version: '210825'
 main: xyz.blackdev.utilityxcore.UtilityXCore
 api-version: '1.21'
 prefix: UX-Core

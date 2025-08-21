@@ -8,6 +8,7 @@ import xyz.blackdev.utilityxcore.commands.AddonCommand;
 import xyz.blackdev.utilityxcore.commands.CheckVersionCommand;
 import xyz.blackdev.utilityxcore.commands.UtilityXCommand;
 import xyz.blackdev.utilityxcore.commands.UtilityXCoreCommand;
+import xyz.blackdev.utilityxcore.config.ConfigManager;
 import xyz.blackdev.utilityxcore.handlers.ConfigHandler;
 import xyz.blackdev.utilityxcore.handlers.DirectoryHandler;
 import xyz.xenondevs.invui.InvUI;
@@ -18,12 +19,13 @@ import java.util.logging.Logger;
 
 public final class UtilityXCore extends JavaPlugin {
     public static Logger logger = Logger.getLogger("UX-Core");
-    public static String version = "060825";
-
+    public static String version = "210825";
     private static UtilityXCore instance;
+    public static ConfigManager configManager;
     @Override
     public void onEnable() {
         UtilityXCore.instance = this;
+        configManager = new ConfigManager();
 
         logger.info("UtilityXCore has been enabled!");
         DirectoryHandler.createDirectories();
