@@ -23,7 +23,7 @@ public class DirectoryUtil {
     }
 
     public static Path createUXSubDirectory(Logger logger, String basePath, String folderName) {
-        Path path = Path.of(basePath, "plugins/UX", folderName);
+        Path path = Path.of(basePath, "UX", folderName);
         try {
             if (!Files.exists(path)) {
                 logger.info("Created directory: " + path);

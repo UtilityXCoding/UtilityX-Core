@@ -1,4 +1,4 @@
-package xyz.blackdev.utilityxcore.api;
+package xyz.blackdev.utilityxcore.impl;
 
 import java.nio.file.Path;
 

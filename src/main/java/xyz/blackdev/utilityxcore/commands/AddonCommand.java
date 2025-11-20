@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 public class AddonCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
+
         Collection<Addon> addons = Addon.getAddons();
 
         if (addons.isEmpty()) {
