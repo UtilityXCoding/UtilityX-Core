@@ -1,37 +1,27 @@
 package xyz.blackdev.utilityxcore;
 
-import de.utilityx.api.AddonRegistry;
-import de.utilityx.api.ConfigFacade;
-import de.utilityx.api.Directories;
-import de.utilityx.api.UtilityX;
-import de.utilityx.api.UtilityXAPI;
-import de.utilityx.api.VersionInfoAddon;
-
+import de.utilityx.api.*;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import xyz.blackdev.utilityxcore.addon.Addon;
 import xyz.blackdev.utilityxcore.addon.AddonListener;
-
 import xyz.blackdev.utilityxcore.commands.AddonCommand;
 import xyz.blackdev.utilityxcore.commands.CheckVersionCommand;
 import xyz.blackdev.utilityxcore.commands.UtilityXCommand;
 import xyz.blackdev.utilityxcore.commands.UtilityXCoreCommand;
-
 import xyz.blackdev.utilityxcore.config.ConfigManager;
 import xyz.blackdev.utilityxcore.handlers.ConfigHandler;
 import xyz.blackdev.utilityxcore.handlers.DirectoryHandler;
-
 import xyz.blackdev.utilityxcore.impl.BukkitAddonRegistry;
 import xyz.blackdev.utilityxcore.impl.BukkitConfigFacade;
 import xyz.blackdev.utilityxcore.impl.BukkitDirectories;
-
 import xyz.xenondevs.invui.InvUI;
 
 import java.io.IOException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.logging.Logger;
 
 public final class UtilityXCore extends JavaPlugin {
@@ -116,10 +106,10 @@ public final class UtilityXCore extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new AddonListener(), this);
 
         // ========= COMMANDS =========
-        getCommand("utilityx").setExecutor(new UtilityXCommand());
-        getCommand("addon").setExecutor(new AddonCommand());
-        getCommand("UXVersion").setExecutor(new CheckVersionCommand());
-        getCommand("UtilityXCore").setExecutor(new UtilityXCoreCommand());
+        registerCommand("utilityx", List.of("ux", "uxui", "uxgui", "uxcoreui", "uxcoregui"), new UtilityXCommand());
+        registerCommand("addon", List.of("uxaddon", "uxa"), new AddonCommand());
+        registerCommand("uxversion", List.of("utilityxversion", "uxv"), new CheckVersionCommand());
+        registerCommand("utilityxcore", List.of("uxcore", "uxc"), new UtilityXCoreCommand());
 
         // ========= LOAD ADDONS =========
         Bukkit.getScheduler().runTask(this, this::loadAddons);

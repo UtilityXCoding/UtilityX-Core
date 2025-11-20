@@ -1,17 +1,14 @@
 package xyz.blackdev.utilityxcore.commands;
 
 import com.google.common.collect.Lists;
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import xyz.blackdev.utilityxcore.addon.Addon;
 
 import java.util.Collection;
@@ -21,16 +18,17 @@ import java.util.stream.Collectors;
 
 /**
  * Inspired by PaperPluginsCommand ~ Idiotischer
- * */
-public class AddonCommand implements CommandExecutor, TabCompleter {
+ *
+ */
+public class AddonCommand implements BasicCommand {
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
-
+    public void execute(CommandSourceStack commandSourceStack, String[] args) {
+        CommandSender sender = commandSourceStack.getSender();
         Collection<Addon> addons = Addon.getAddons();
 
         if (addons.isEmpty()) {
             sender.sendMessage(Component.text("⚠ No addons are currently loaded.", NamedTextColor.YELLOW));
-            return true;
+            return;
         }
 
         int page = 0;
@@ -39,7 +37,7 @@ public class AddonCommand implements CommandExecutor, TabCompleter {
                 page = Integer.parseInt(args[0]);
             } catch (NumberFormatException e) {
                 sender.sendMessage(Component.text("❌ Invalid page!", NamedTextColor.RED));
-                return true;
+                return;
             }
         }
 
@@ -52,7 +50,7 @@ public class AddonCommand implements CommandExecutor, TabCompleter {
 
         if (page < 0 || page >= pages.size()) {
             sender.sendMessage(Component.text("❌ Invalid page " + pages.size(), NamedTextColor.RED));
-            return true;
+            return;
         }
 
         sender.sendMessage(Component.text("ℹ Loaded Addons (" + addons.size() + ") - Page " + (page + 1) + "/" + pages.size(), NamedTextColor.GREEN));
@@ -63,7 +61,7 @@ public class AddonCommand implements CommandExecutor, TabCompleter {
         if (page > 0) {
             Component prevPage = Component.text("◀ Previous Page", NamedTextColor.AQUA, TextDecoration.UNDERLINED)
                     .hoverEvent(HoverEvent.showText(Component.text("Click to view page " + page)))
-                    .clickEvent(ClickEvent.runCommand("/" + label + " " + (page - 1)));
+                    .clickEvent(ClickEvent.runCommand("/addon " + (page - 1)));
 
             nav = nav.append(prevPage);
         }
@@ -75,7 +73,7 @@ public class AddonCommand implements CommandExecutor, TabCompleter {
         if (page + 1 < pages.size()) {
             Component nextPage = Component.text("▶ Next Page", NamedTextColor.AQUA, TextDecoration.UNDERLINED)
                     .hoverEvent(HoverEvent.showText(Component.text("Click to view page " + (page + 2))))
-                    .clickEvent(ClickEvent.runCommand("/" + label + " " + (page + 1)));
+                    .clickEvent(ClickEvent.runCommand("/addon " + (page + 1)));
 
             nav = nav.append(nextPage);
         }
@@ -83,14 +81,16 @@ public class AddonCommand implements CommandExecutor, TabCompleter {
         if (!nav.equals(Component.empty())) {
             sender.sendMessage(nav);
         }
-        return true;
     }
 
+    @Override
+    public Collection<String> suggest(CommandSourceStack commandSourceStack, String[] args) {
+        if (Addon.getAddons().isEmpty()) return List.of("⚠ No Addons loaded!");
+        return Addon.getAddons().stream().map(Addon::getName).collect(Collectors.toList());
+    }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
-        if(Addon.getAddons().isEmpty()) return List.of("⚠ No Addons loaded!");
-
-        return Addon.getAddons().stream().map(Addon::getName).collect(Collectors.toList());
+    public String permission() {
+        return "op";
     }
 }

@@ -1,14 +1,11 @@
 package xyz.blackdev.utilityxcore.addon;
 
 import org.bukkit.Bukkit;
-import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
-import xyz.blackdev.utilityxcore.UtilityXCore;
 import xyz.blackdev.utilityxcore.handlers.DirectoryHandler;
-import xyz.blackdev.utilityxcore.utils.DirectoryUtil;
 import xyz.blackdev.utilityxcore.utils.DownloadUtil;
 
 import java.nio.file.Files;

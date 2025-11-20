@@ -1,11 +1,11 @@
 package xyz.blackdev.utilityxcore.utils;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.net.URL;
 
 public class DownloadUtil {
     public static void downloadFile(String fileURL, String targetDir) throws Exception {

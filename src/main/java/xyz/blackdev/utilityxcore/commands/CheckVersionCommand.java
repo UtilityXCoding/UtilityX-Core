@@ -1,20 +1,21 @@
 package xyz.blackdev.utilityxcore.commands;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.command.CommandSender;
 import xyz.blackdev.utilityxcore.UtilityXCore;
 
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Scanner;
 
-public class CheckVersionCommand implements CommandExecutor {
+public class CheckVersionCommand implements BasicCommand {
     private static final String VERSION_URL = "https://raw.githubusercontent.com/UtilityXCoding/UtilityX-Assets/refs/heads/main/generalinformation.json";
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public void execute(CommandSourceStack commandSourceStack, String[] args) {
+        CommandSender sender = commandSourceStack.getSender();
         sender.sendMessage("§3Checking for updates...");
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(VERSION_URL).openConnection();
@@ -39,6 +40,10 @@ public class CheckVersionCommand implements CommandExecutor {
         } catch (Exception e) {
             sender.sendMessage("§cFailed to check for updates: " + e.getMessage());
         }
-        return true;
+    }
+
+    @Override
+    public String permission() {
+        return "op";
     }
 }

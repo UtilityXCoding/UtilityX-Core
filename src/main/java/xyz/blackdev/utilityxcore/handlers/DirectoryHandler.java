@@ -1,12 +1,9 @@
 package xyz.blackdev.utilityxcore.handlers;
 
-import org.bukkit.plugin.Plugin;
 import xyz.blackdev.utilityxcore.UtilityXCore;
 import xyz.blackdev.utilityxcore.utils.DirectoryUtil;
 
 import java.nio.file.Path;
-
-import static org.bukkit.Bukkit.getServer;
 
 public class DirectoryHandler {
     private static Path addons;

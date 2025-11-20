@@ -3,7 +3,6 @@ package xyz.blackdev.utilityxcore.addon;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
-import xyz.blackdev.utilityxcore.addon.Addon;
 
 public class AddonListener implements Listener {
 

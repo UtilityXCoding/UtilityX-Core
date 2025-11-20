@@ -1,18 +1,14 @@
 package xyz.blackdev.utilityxcore.impl;
 
-import de.utilityx.api.AddonHandle;
-import de.utilityx.api.AddonLifecycleListener;
-import de.utilityx.api.AddonRef;
-import de.utilityx.api.AddonRegistry;
-import de.utilityx.api.AddonState;
-import de.utilityx.api.OperationResult;
-
+import de.utilityx.api.*;
 import xyz.blackdev.utilityxcore.addon.Addon;
 
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
