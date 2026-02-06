@@ -1,0 +1,6 @@
+main: de.utilityx.core.UtilityXCore
+name: UXCore
+version: "v0.0.1"
+api-version: "1.21.11"
+author: BlackDevCoding, Idiotischer
+description: A Modular Plugin that is supposed to replace Essentials.

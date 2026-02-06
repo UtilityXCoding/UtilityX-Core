@@ -1,0 +1,4 @@
+# Repository URLs that return JSON arrays of addon entries with:
+# name, description, author, item, download (.jar link)
+repositories:
+  - https://repo.papermc.io/repository/maven-public/
