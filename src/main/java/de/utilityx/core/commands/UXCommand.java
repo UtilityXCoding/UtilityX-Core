@@ -16,13 +16,11 @@ public class UXCommand {
     private Component end = mm.deserialize("<gradient:#e6e1dd:#e6e1dd>I=★========================★=I</gradient>");
     private Component second = mm.deserialize("<gradient:#2a6d73:#2a6d73>Copyright:</gradient>");
     private Component copyright1 = mm.deserialize("<gradient:#2a6d73:#2a6d73>@BlackDev</gradient>");
-    private Component copyright2 = mm.deserialize("<gradient:#2a6d73:#2a6d73>@Idiotischer</gradient>");
     private Component copyright3 = mm.deserialize("<gradient:#2a6d73:#2a6d73>@Misieur</gradient>");
     private Component third = mm.deserialize("<gradient:#2a6d73:#2a6d73>Version: " + UtilityXCore.version + "</gradient>");
 
     private Component finished = first.appendNewline().append(
             second.appendNewline().append(copyright1)
-                    .appendNewline().append(copyright2)
             .appendNewline().append(copyright3)
                     .appendNewline().append(line).appendNewline().append(third).appendNewline().append(end)
     );

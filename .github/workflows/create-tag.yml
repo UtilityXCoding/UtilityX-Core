@@ -1,0 +1,114 @@
+name: Create Tag
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+    inputs:
+      ver:
+        description: "Version value (e.g. v1.2.3 or 1.2.3-rc-1)"
+        required: false
+        default: ""
+        type: string
+      java_class_path:
+        description: "Java file path to read version from when ver is empty"
+        required: false
+        default: "src/main/java/de/utilityx/core/UtilityXCore.java"
+        type: string
+      ref:
+        description: "Branch or commit to tag"
+        required: false
+        default: "main"
+        type: string
+
+jobs:
+  create-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout target ref
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref }}
+          fetch-depth: 0
+
+      - name: Compute tag from ver or Java class
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ver="${{ inputs.ver }}"
+
+          source_type="input"
+          if [[ -z "$ver" ]]; then
+            java_file="${{ inputs.java_class_path }}"
+            if [[ ! -f "$java_file" ]]; then
+              echo "Java class file not found: $java_file" >&2
+              exit 1
+            fi
+
+            # Reads: public static String version = "v0.0.1";
+            extracted="$(sed -n 's/.*version[[:space:]]*=[[:space:]]*"\([^"]\+\)".*/\1/p' "$java_file" | head -n 1)"
+            if [[ -z "$extracted" ]]; then
+              echo "Could not extract version from $java_file" >&2
+              exit 1
+            fi
+
+            ver="$extracted"
+            source_type="java_class"
+          fi
+
+          if [[ "${ver:0:1}" == "v" || "${ver:0:1}" == "V" ]]; then
+            short_version="${ver:1}"
+          else
+            short_version="$ver"
+          fi
+
+          short_version="$(printf '%s' "$short_version" | tr '[:lower:]' '[:upper:]')"
+          tag="v${short_version}"
+
+          echo "resolved_ver=$ver" >> "$GITHUB_OUTPUT"
+          echo "short_version=$short_version" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "source_type=$source_type" >> "$GITHUB_OUTPUT"
+
+      - name: Fail if tag already exists
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          tag="${{ steps.version.outputs.tag }}"
+          if git rev-parse -q --verify "refs/tags/${tag}" >/dev/null; then
+            echo "Tag ${tag} already exists locally" >&2
+            exit 1
+          fi
+          if git ls-remote --exit-code --tags origin "refs/tags/${tag}" >/dev/null 2>&1; then
+            echo "Tag ${tag} already exists on origin" >&2
+            exit 1
+          fi
+
+      - name: Create and push tag
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          tag="${{ steps.version.outputs.tag }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag "$tag"
+          git push origin "$tag"
+
+      - name: Summary
+        run: |
+          {
+            echo "### Tag created"
+            echo ""
+            echo "- Ref: \\`${{ inputs.ref }}\\`"
+            echo "- Source: \\`${{ steps.version.outputs.source_type }}\\`"
+            echo "- Input ver: \\`${{ inputs.ver }}\\`"
+            echo "- Resolved ver: \\`${{ steps.version.outputs.resolved_ver }}\\`"
+            echo "- Java class path: \\`${{ inputs.java_class_path }}\\`"
+            echo "- shortVersion: \\`${{ steps.version.outputs.short_version }}\\`"
+            echo "- Tag: \\`${{ steps.version.outputs.tag }}\\`"
+          } >> "$GITHUB_STEP_SUMMARY"
