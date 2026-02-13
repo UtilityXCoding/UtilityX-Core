@@ -1,0 +1,55 @@
+name: Publish to UtilityX Repository (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish (e.g. 1.2.3 or v1.2.3)"
+        required: true
+        type: string
+      ref:
+        description: "Branch/commit to build (default: main)"
+        required: false
+        default: "main"
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+          fetch-depth: 0
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Publish to UtilityX releases
+        env:
+          REPOSILITE_USER: ${{ secrets.REPOSILITE_USER }}
+          REPOSILITE_TOKEN: ${{ secrets.REPOSILITE_TOKEN }}
+          PUBLISH_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+
+          # Normalize: allow "v1.2.3" or "1.2.3"
+          ver="${PUBLISH_VERSION}"
+          if [[ "$ver" == v* ]]; then
+            ver="${ver#v}"
+          fi
+
+          echo "Publishing version: $ver"
+          ./gradlew --no-daemon clean shadowJar publish -Pver="$ver"

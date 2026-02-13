@@ -3,6 +3,29 @@ import java.text.SimpleDateFormat
 plugins {
     id 'java'
     id 'com.gradleup.shadow' version '9.3.1'
+    id 'maven-publish'
+}
+
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact(tasks.shadowJar)
+            artifactId = rootProject.name
+        }
+    }
+
+    repositories {
+        maven {
+            name = "UtilityX-releases"
+            url = uri("https://repo.utilityx.de/releases")
+
+            credentials {
+                username = System.getenv("REPOSILITE_USER")
+                password = System.getenv("REPOSILITE_TOKEN")
+            }
+        }
+    }
 }
 
 group = 'de.utilityx.core'
