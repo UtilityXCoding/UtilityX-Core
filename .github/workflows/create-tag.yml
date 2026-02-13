@@ -73,19 +73,19 @@ jobs:
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
           echo "source_type=$source_type" >> "$GITHUB_OUTPUT"
 
-      - name: Fail if tag already exists
+      - name: Delete existing tag if it already exists
         shell: bash
         run: |
           set -euo pipefail
 
           tag="${{ steps.version.outputs.tag }}"
           if git rev-parse -q --verify "refs/tags/${tag}" >/dev/null; then
-            echo "Tag ${tag} already exists locally" >&2
-            exit 1
+            echo "Deleting local tag ${tag}"
+            git tag -d "$tag"
           fi
           if git ls-remote --exit-code --tags origin "refs/tags/${tag}" >/dev/null 2>&1; then
-            echo "Tag ${tag} already exists on origin" >&2
-            exit 1
+            echo "Deleting remote tag ${tag}"
+            git push origin ":refs/tags/${tag}"
           fi
 
       - name: Create and push tag
@@ -99,6 +99,14 @@ jobs:
           git tag "$tag"
           git push origin "$tag"
 
+      - name: Create or update draft release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: ${{ steps.version.outputs.tag }}
+          draft: true
+          generate_release_notes: true
+
       - name: Summary
         run: |
           {
@@ -111,4 +119,5 @@ jobs:
             echo "- Java class path: \\`${{ inputs.java_class_path }}\\`"
             echo "- shortVersion: \\`${{ steps.version.outputs.short_version }}\\`"
             echo "- Tag: \\`${{ steps.version.outputs.tag }}\\`"
+            echo "- Draft release: created/updated"
           } >> "$GITHUB_STEP_SUMMARY"
